@@ -1307,11 +1307,13 @@ void	BGM_Device::WillDoIOOperation(UInt32 inOperationID, bool& outWillDo, bool& 
 		case kAudioServerPlugInIOOperationWriteMix:
 			outWillDo = true;
 			outWillDoInPlace = true;
+            DebugMsg("[DEBUG] WillDoIOOperation 1");
 			break;
 
         case kAudioServerPlugInIOOperationProcessMix:
             outWillDo = mVolumeControl.WillApplyVolumeToAudioRT();
             outWillDoInPlace = true;
+            DebugMsg("[DEBUG] WillDoIOOperation 2");
             break;
 
 		case kAudioServerPlugInIOOperationCycle:
@@ -1320,6 +1322,7 @@ void	BGM_Device::WillDoIOOperation(UInt32 inOperationID, bool& outWillDo, bool& 
 		case kAudioServerPlugInIOOperationMixOutput:
 		case kAudioServerPlugInIOOperationConvertMix:
 		default:
+            DebugMsg("[DEBUG] WillDoIOOperation 3");
 			outWillDo = false;
 			outWillDoInPlace = true;
 			break;
@@ -1451,6 +1454,7 @@ void	BGM_Device::EndIOOperation(UInt32 inOperationID, UInt32 inIOBufferFrameSize
 
 void	BGM_Device::ReadInputData(UInt32 inIOBufferFrameSize, Float64 inSampleTime, void* outBuffer)
 {
+    DebugMsg("[DEBUG] read");
     // Wrap the provided buffer in an AudioBufferList.
     AudioBufferList abl = {
         .mNumberBuffers = 1,

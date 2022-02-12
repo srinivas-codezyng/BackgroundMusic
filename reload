@@ -1,0 +1,12 @@
+fromLocation='/Users/srinivas/Library/Developer/Xcode/DerivedData/BGMDriver-fyylsbxfocyjqueigrgehzunbvxc/Build/Products/Debug/Background Music Device.driver'
+toLocationFolder="/Library/Audio/Plug-Ins/HAL/"
+toLocationDriver='/Library/Audio/Plug-Ins/HAL/Background Music Device.driver'
+
+echo "$fromLocation"
+sudo rm -Rf "$toLocationDriver"
+sudo cp -R "$fromLocation" "$toLocationFolder"
+sudo launchctl unload /System/Library/LaunchDaemons/com.apple.audio.coreaudiod.plist
+sudo launchctl load /System/Library/LaunchDaemons/com.apple.audio.coreaudiod.plist
+killall CAPlayThroughSwift
+sleep 1
+open /Users/srinivas/Desktop/CAPlayThroughSwift.app 
