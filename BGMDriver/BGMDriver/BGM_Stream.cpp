@@ -64,26 +64,30 @@ bool    BGM_Stream::HasProperty(AudioObjectID inObjectID,
     //    For each object, this driver implements all the required properties plus a few extras that
     //    are useful but not required. There is more detailed commentary about each property in the
     //    GetPropertyData() method.
-
     bool theAnswer = false;
 
     switch(inAddress.mSelector)
     {
         case kAudioStreamPropertyIsActive:
+            return false;
         case kAudioStreamPropertyDirection:
         case kAudioStreamPropertyTerminalType:
         case kAudioStreamPropertyStartingChannel:
         case kAudioStreamPropertyLatency:
+            return true;
         case kAudioStreamPropertyVirtualFormat:
+            return false;
         case kAudioStreamPropertyPhysicalFormat:
+            return true;
         case kAudioStreamPropertyAvailableVirtualFormats:
         case kAudioStreamPropertyAvailablePhysicalFormats:
             theAnswer = true;
             break;
 
         default:
-            theAnswer = BGM_Object::HasProperty(inObjectID, inClientPID, inAddress);
-            break;
+            return false;
+//            theAnswer = BGM_Object::HasProperty(inObjectID, inClientPID, inAddress);
+//            break;
     };
 
     return theAnswer;

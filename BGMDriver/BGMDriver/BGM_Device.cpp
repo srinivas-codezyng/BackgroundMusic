@@ -161,16 +161,16 @@ void	BGM_Device::Activate()
 	mInputStream.Activate();
 	mOutputStream.Activate();
 
-	if(mVolumeControl.GetObjectID() != kAudioObjectUnknown)
-	{
-		mVolumeControl.Activate();
-	}
-
-    if(mMuteControl.GetObjectID() != kAudioObjectUnknown)
-	{
-		mMuteControl.Activate();
-	}
-	
+//	if(mVolumeControl.GetObjectID() != kAudioObjectUnknown)
+//	{
+//		mVolumeControl.Activate();
+//	}
+//
+//    if(mMuteControl.GetObjectID() != kAudioObjectUnknown)
+//	{
+//		mMuteControl.Activate();
+//	}
+//	
 	//	Call the super-class, which just marks the object as active
 	BGM_AbstractDevice::Activate();
 }
@@ -205,7 +205,7 @@ void    BGM_Device::InitLoopback()
     //  2 channels * 32-bit float = bytes in each frame
     //  Pass 1 for nChannels because it's going to be storing interleaved audio, which means we
     //  don't need a separate buffer for each channel.
-	mLoopbackRingBuffer.Allocate(1, 2 * sizeof(Float32), kLoopbackRingBufferFrameSize);
+//	mLoopbackRingBuffer.Allocate(1, 2 * sizeof(Float32), kLoopbackRingBufferFrameSize);
 }
 
 #pragma mark Property Operations
@@ -1299,35 +1299,38 @@ void	BGM_Device::GetZeroTimeStamp(Float64& outSampleTime, UInt64& outHostTime, U
 
 void	BGM_Device::WillDoIOOperation(UInt32 inOperationID, bool& outWillDo, bool& outWillDoInPlace) const
 {
-	switch(inOperationID)
-	{
-        case kAudioServerPlugInIOOperationThread:
-        case kAudioServerPlugInIOOperationReadInput:
-        case kAudioServerPlugInIOOperationProcessOutput:
-		case kAudioServerPlugInIOOperationWriteMix:
-			outWillDo = true;
-			outWillDoInPlace = true;
-            DebugMsg("[DEBUG] WillDoIOOperation 1");
-			break;
-
-        case kAudioServerPlugInIOOperationProcessMix:
-            outWillDo = mVolumeControl.WillApplyVolumeToAudioRT();
-            outWillDoInPlace = true;
-            DebugMsg("[DEBUG] WillDoIOOperation 2");
-            break;
-
-		case kAudioServerPlugInIOOperationCycle:
-        case kAudioServerPlugInIOOperationConvertInput:
-        case kAudioServerPlugInIOOperationProcessInput:
-		case kAudioServerPlugInIOOperationMixOutput:
-		case kAudioServerPlugInIOOperationConvertMix:
-		default:
-            DebugMsg("[DEBUG] WillDoIOOperation 3");
-			outWillDo = false;
-			outWillDoInPlace = true;
-			break;
-			
-	};
+    outWillDo = true;
+    outWillDoInPlace = true;
+//    return
+//	switch(inOperationID)
+//	{
+//        case kAudioServerPlugInIOOperationThread:
+//        case kAudioServerPlugInIOOperationReadInput:
+//        case kAudioServerPlugInIOOperationProcessOutput:
+//		case kAudioServerPlugInIOOperationWriteMix:
+//			outWillDo = true;
+//			outWillDoInPlace = true;
+//            DebugMsg("[DEBUG] WillDoIOOperation 1");
+//			break;
+//
+//        case kAudioServerPlugInIOOperationProcessMix:
+//            outWillDo = mVolumeControl.WillApplyVolumeToAudioRT();
+//            outWillDoInPlace = true;
+//            DebugMsg("[DEBUG] WillDoIOOperation 2");
+//            break;
+//
+//		case kAudioServerPlugInIOOperationCycle:
+//        case kAudioServerPlugInIOOperationConvertInput:
+//        case kAudioServerPlugInIOOperationProcessInput:
+//		case kAudioServerPlugInIOOperationMixOutput:
+//		case kAudioServerPlugInIOOperationConvertMix:
+//		default:
+//            DebugMsg("[DEBUG] WillDoIOOperation 3");
+//			outWillDo = false;
+//			outWillDoInPlace = true;
+//			break;
+//
+//	};
 }
 
 void	BGM_Device::BeginIOOperation(UInt32 inOperationID, UInt32 inIOBufferFrameSize, const AudioServerPlugInIOCycleInfo& inIOCycleInfo, UInt32 inClientID)
@@ -1454,117 +1457,119 @@ void	BGM_Device::EndIOOperation(UInt32 inOperationID, UInt32 inIOBufferFrameSize
 
 void	BGM_Device::ReadInputData(UInt32 inIOBufferFrameSize, Float64 inSampleTime, void* outBuffer)
 {
-    DebugMsg("[DEBUG] read");
-    // Wrap the provided buffer in an AudioBufferList.
-    AudioBufferList abl = {
-        .mNumberBuffers = 1,
-        .mBuffers[0] = {
-            .mNumberChannels = 2,
-            // Each frame is 2 Float32 samples (one per channel). The number of frames * the number
-            // of bytes per frame = the size of outBuffer in bytes.
-            .mDataByteSize = static_cast<UInt32>(inIOBufferFrameSize * sizeof(Float32) * 2),
-            .mData = outBuffer
-        }
-    };
-
-    // Copy the audio data from our ring buffer into the provided buffer.
-    CARingBufferError err =
-            mLoopbackRingBuffer.Fetch(&abl,
-                                      inIOBufferFrameSize,
-                                      static_cast<CARingBuffer::SampleTime>(inSampleTime));
-
-    // Handle errors.
-    switch (err)
-    {
-        case kCARingBufferError_CPUOverload:
-            // Write silence to the buffer.
-            memset(outBuffer, 0, abl.mBuffers[0].mDataByteSize);
-            break;
-        case kCARingBufferError_TooMuch:
-            // Should be impossible, but handle it just in case. Write silence to the buffer and
-            // return an error code.
-            memset(outBuffer, 0, abl.mBuffers[0].mDataByteSize);
-            Throw(CAException(kAudioHardwareIllegalOperationError));
-        case kCARingBufferError_OK:
-            break;
-        default:
-            throw CAException(kAudioHardwareUnspecifiedError);
-    }
+//    DebugMsg("[DEBUG] read");
+//    // Wrap the provided buffer in an AudioBufferList.
+//    AudioBufferList abl = {
+//        .mNumberBuffers = 1,
+//        .mBuffers[0] = {
+//            .mNumberChannels = 2,
+//            // Each frame is 2 Float32 samples (one per channel). The number of frames * the number
+//            // of bytes per frame = the size of outBuffer in bytes.
+//            .mDataByteSize = static_cast<UInt32>(inIOBufferFrameSize * sizeof(Float32) * 2),
+//            .mData = outBuffer
+//        }
+//    };
+//
+//    // Copy the audio data from our ring buffer into the provided buffer.
+//    CARingBufferError err =
+//            mLoopbackRingBuffer.Fetch(&abl,
+//                                      inIOBufferFrameSize,
+//                                      static_cast<CARingBuffer::SampleTime>(inSampleTime));
+//
+//    // Handle errors.
+//    switch (err)
+//    {
+//        case kCARingBufferError_CPUOverload:
+//            // Write silence to the buffer.
+//            memset(outBuffer, 0, abl.mBuffers[0].mDataByteSize);
+//            break;
+//        case kCARingBufferError_TooMuch:
+//            // Should be impossible, but handle it just in case. Write silence to the buffer and
+//            // return an error code.
+//            memset(outBuffer, 0, abl.mBuffers[0].mDataByteSize);
+//            Throw(CAException(kAudioHardwareIllegalOperationError));
+//        case kCARingBufferError_OK:
+//            break;
+//        default:
+//            throw CAException(kAudioHardwareUnspecifiedError);
+//    }
 }
 
 void	BGM_Device::WriteOutputData(UInt32 inIOBufferFrameSize, Float64 inSampleTime, const void* inBuffer)
 {
-    // Wrap the provided buffer in an AudioBufferList.
-    AudioBufferList abl = {
-        .mNumberBuffers = 1,
-        .mBuffers[0] = {
-            .mNumberChannels = 2,
-            // Each frame is 2 Float32 samples (one per channel). The number of frames * the number
-            // of bytes per frame = the size of inBuffer in bytes.
-            .mDataByteSize = static_cast<UInt32>(inIOBufferFrameSize * sizeof(Float32) * 2),
-            .mData = const_cast<void *>(inBuffer)
-        }
-    };
-
-    // Copy the audio data from the provided buffer into our ring buffer.
-    CARingBufferError err =
-            mLoopbackRingBuffer.Store(&abl,
-                                      inIOBufferFrameSize,
-                                      static_cast<CARingBuffer::SampleTime>(inSampleTime));
-
-    // Return an error code if we failed to store the data. (But ignore CPU overload, which would be
-    // temporary.)
-    if (err != kCARingBufferError_OK && err != kCARingBufferError_CPUOverload)
-    {
-        Throw(CAException(err));
-    }
+//    DebugMsg("[DEBUG] write");
+//
+//    // Wrap the provided buffer in an AudioBufferList.
+//    AudioBufferList abl = {
+//        .mNumberBuffers = 1,
+//        .mBuffers[0] = {
+//            .mNumberChannels = 2,
+//            // Each frame is 2 Float32 samples (one per channel). The number of frames * the number
+//            // of bytes per frame = the size of inBuffer in bytes.
+//            .mDataByteSize = static_cast<UInt32>(inIOBufferFrameSize * sizeof(Float32) * 2),
+//            .mData = const_cast<void *>(inBuffer)
+//        }
+//    };
+//
+//    // Copy the audio data from the provided buffer into our ring buffer.
+//    CARingBufferError err =
+//            mLoopbackRingBuffer.Store(&abl,
+//                                      inIOBufferFrameSize,
+//                                      static_cast<CARingBuffer::SampleTime>(inSampleTime));
+//
+//    // Return an error code if we failed to store the data. (But ignore CPU overload, which would be
+//    // temporary.)
+//    if (err != kCARingBufferError_OK && err != kCARingBufferError_CPUOverload)
+//    {
+//        Throw(CAException(err));
+//    }
 }
 
 void	BGM_Device::ApplyClientRelativeVolume(UInt32 inClientID, UInt32 inIOBufferFrameSize, void* ioBuffer) const
 {
-    Float32* theBuffer = reinterpret_cast<Float32*>(ioBuffer);
-    Float32 theRelativeVolume = mClients.GetClientRelativeVolumeRT(inClientID);
-    
-    auto thePanPositionInt = mClients.GetClientPanPositionRT(inClientID);
-    Float32 thePanPosition = static_cast<Float32>(thePanPositionInt) / 100.0f;
-    
-    // TODO When we get around to supporting devices with more than two channels it would be worth looking into
-    //      kAudioFormatProperty_PanningMatrix and kAudioFormatProperty_BalanceFade in AudioFormat.h.
-    
-    // TODO precompute matrix coefficients w/ volume and do everything in one pass
-    
-    // Apply balance w/ crossfeed to the frames in the buffer.
-    // Expect samples interleaved, starting with left
-    if (thePanPosition > 0.0f) {
-        for (UInt32 i = 0; i < inIOBufferFrameSize * 2; i += 2) {
-            auto L = i;
-            auto R = i + 1;
-            
-            theBuffer[R] = theBuffer[R] + theBuffer[L] * thePanPosition;
-            theBuffer[L] = theBuffer[L] * (1 - thePanPosition);
-        }
-    } else if (thePanPosition < 0.0f) {
-        for (UInt32 i = 0; i < inIOBufferFrameSize * 2; i += 2) {
-            auto L = i;
-            auto R = i + 1;
-            
-            theBuffer[L] = theBuffer[L] + theBuffer[R] * (-thePanPosition);
-            theBuffer[R] = theBuffer[R] * (1 + thePanPosition);
-        }
-    }
-
-    if(theRelativeVolume != 1.0f)
-    {
-        for(UInt32 i = 0; i < inIOBufferFrameSize * 2; i++)
-        {
-            Float32 theAdjustedSample = theBuffer[i] * theRelativeVolume;
-            
-            // Clamp to [-1, 1].
-            // (This way is roughly 6 times faster than using std::min and std::max because the compiler can vectorize the loop.)
-            const Float32 theAdjustedSampleClippedBelow = theAdjustedSample < -1.0f ? -1.0f : theAdjustedSample;
-            theBuffer[i] = theAdjustedSampleClippedBelow > 1.0f ? 1.0f : theAdjustedSampleClippedBelow;
-        }
-    }
+//    Float32* theBuffer = reinterpret_cast<Float32*>(ioBuffer);
+//    Float32 theRelativeVolume = mClients.GetClientRelativeVolumeRT(inClientID);
+//    
+//    auto thePanPositionInt = mClients.GetClientPanPositionRT(inClientID);
+//    Float32 thePanPosition = static_cast<Float32>(thePanPositionInt) / 100.0f;
+//    
+//    // TODO When we get around to supporting devices with more than two channels it would be worth looking into
+//    //      kAudioFormatProperty_PanningMatrix and kAudioFormatProperty_BalanceFade in AudioFormat.h.
+//    
+//    // TODO precompute matrix coefficients w/ volume and do everything in one pass
+//    
+//    // Apply balance w/ crossfeed to the frames in the buffer.
+//    // Expect samples interleaved, starting with left
+//    if (thePanPosition > 0.0f) {
+//        for (UInt32 i = 0; i < inIOBufferFrameSize * 2; i += 2) {
+//            auto L = i;
+//            auto R = i + 1;
+//            
+//            theBuffer[R] = theBuffer[R] + theBuffer[L] * thePanPosition;
+//            theBuffer[L] = theBuffer[L] * (1 - thePanPosition);
+//        }
+//    } else if (thePanPosition < 0.0f) {
+//        for (UInt32 i = 0; i < inIOBufferFrameSize * 2; i += 2) {
+//            auto L = i;
+//            auto R = i + 1;
+//            
+//            theBuffer[L] = theBuffer[L] + theBuffer[R] * (-thePanPosition);
+//            theBuffer[R] = theBuffer[R] * (1 + thePanPosition);
+//        }
+//    }
+//
+//    if(theRelativeVolume != 1.0f)
+//    {
+//        for(UInt32 i = 0; i < inIOBufferFrameSize * 2; i++)
+//        {
+//            Float32 theAdjustedSample = theBuffer[i] * theRelativeVolume;
+//            
+//            // Clamp to [-1, 1].
+//            // (This way is roughly 6 times faster than using std::min and std::max because the compiler can vectorize the loop.)
+//            const Float32 theAdjustedSampleClippedBelow = theAdjustedSample < -1.0f ? -1.0f : theAdjustedSample;
+//            theBuffer[i] = theAdjustedSampleClippedBelow > 1.0f ? 1.0f : theAdjustedSampleClippedBelow;
+//        }
+//    }
 }
 
 #pragma mark Accessors

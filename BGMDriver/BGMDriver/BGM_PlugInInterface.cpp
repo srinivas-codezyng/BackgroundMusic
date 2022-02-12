@@ -110,19 +110,19 @@ static BGM_Object& BGM_LookUpOwnerObject(AudioObjectID inObjectID)
         case kObjectID_Device:
         case kObjectID_Stream_Input:
         case kObjectID_Stream_Output:
-        case kObjectID_Volume_Output_Master:
-        case kObjectID_Mute_Output_Master:
+//        case kObjectID_Volume_Output_Master:
+//        case kObjectID_Mute_Output_Master:
             return BGM_Device::GetInstance();
-
-        case kObjectID_Device_UI_Sounds:
-        case kObjectID_Stream_Input_UI_Sounds:
-        case kObjectID_Stream_Output_UI_Sounds:
-        case kObjectID_Volume_Output_Master_UI_Sounds:
-            return BGM_Device::GetUISoundsInstance();
-
-        case kObjectID_Device_Null:
-        case kObjectID_Stream_Null:
-            return BGM_NullDevice::GetInstance();
+//
+//        case kObjectID_Device_UI_Sounds:
+//        case kObjectID_Stream_Input_UI_Sounds:
+//        case kObjectID_Stream_Output_UI_Sounds:
+//        case kObjectID_Volume_Output_Master_UI_Sounds:
+//            return BGM_Device::GetUISoundsInstance();
+//
+//        case kObjectID_Device_Null:
+//        case kObjectID_Stream_Null:
+//            return BGM_NullDevice::GetInstance();
     }
     
     DebugMsg("BGM_LookUpOwnerObject: unknown object");
@@ -137,11 +137,11 @@ static BGM_AbstractDevice& BGM_LookUpDevice(AudioObjectID inObjectID)
         case kObjectID_Device:
             return BGM_Device::GetInstance();
 
-        case kObjectID_Device_UI_Sounds:
-            return BGM_Device::GetUISoundsInstance();
-
-        case kObjectID_Device_Null:
-            return BGM_NullDevice::GetInstance();
+//        case kObjectID_Device_UI_Sounds:
+//            return BGM_Device::GetUISoundsInstance();
+//
+//        case kObjectID_Device_Null:
+//            return BGM_NullDevice::GetInstance();
     }
 
     DebugMsg("BGM_LookUpDevice: unknown device");
